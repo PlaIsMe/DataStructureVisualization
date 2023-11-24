@@ -28,7 +28,7 @@ class Sort {
         void destroy();        
         void blockButton(SDL_Renderer*& renderer);
         void unBlockButton(SDL_Renderer*& renderer);
-        void threadManager();
+        void threadManager(SDL_Renderer*& renderer);
         void selectionSort(SDL_Renderer*& renderer);
         void drawSelectionSort(vector<int> vector, SDL_Renderer* renderer, unsigned int green, unsigned int red, unsigned int blue);
         void insertionSort(SDL_Renderer*& renderer);
@@ -38,9 +38,8 @@ class Sort {
         void interchangeSort(SDL_Renderer*& renderer);
         void drawInterchangeSort(vector<int> vector, SDL_Renderer* renderer, unsigned int red, unsigned int blue);
         void countingSort(SDL_Renderer*& renderer);
-        void drawCountingSort(vector<int> vector, SDL_Renderer* renderer, unsigned int red);
         void renderTotal(vector<int> vector, SDL_Renderer* renderer, SDL_Rect square_rect,
-         bool is_sorting, TTF_Font *font, SDL_Rect element_rect, SDL_Rect total_rect);
+        bool is_sorting, TTF_Font *font, SDL_Rect element_rect, SDL_Rect total_rect);
 
     private:
         SDL_Cursor* cursor;
