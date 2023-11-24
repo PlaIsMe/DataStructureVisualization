@@ -169,6 +169,9 @@ void Sort::sortAction(SDL_Event& event, bool& quit, SDL_Renderer*& renderer)
                     sort_thread = std::thread(&Sort::interchangeSort, this, std::ref(renderer));
                 } else if (counting_sort_hovered) {
                     sort_thread = std::thread(&Sort::countingSort, this, std::ref(renderer));
+                } else if (quick_sort_hovered) {
+                    vector<int> sort_vector(main_vector.begin(), main_vector.end());
+                    sort_thread = std::thread(&Sort::quickSort, this, std::ref(renderer), std::ref(sort_vector), 0, sort_vector.size() - 1);
                 }
             }
         } else {
@@ -551,7 +554,7 @@ void Sort::countingSort(SDL_Renderer*& renderer)
         SDL_RenderDrawLine(renderer, i + 1, square_rect.h / 10 - sort_vector[i], i + 1, square_rect.h / 10);
         SDL_RenderSetScale(renderer, 1, 1);
         SDL_RenderPresent(renderer);
-        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+        std::this_thread::sleep_for(std::chrono::milliseconds(delay_time * 50));
         counting_vector[sort_vector[i] - 1]++;
         SDL_RenderSetScale(renderer, 10, 10);
         SDL_SetRenderDrawColor(renderer, 0, 153, 231, 255);
@@ -559,7 +562,7 @@ void Sort::countingSort(SDL_Renderer*& renderer)
         SDL_RenderSetScale(renderer, 1, 1);
         renderTotal(counting_vector, renderer, total_square_rect, is_sorting, font, element_rect, total_rect);
         SDL_RenderPresent(renderer);
-        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+        std::this_thread::sleep_for(std::chrono::milliseconds(delay_time * 50));
     }
     int sort_index = 0;
     for (int i = 0; i < counting_vector.size() && is_sorting; i++)
@@ -573,7 +576,7 @@ void Sort::countingSort(SDL_Renderer*& renderer)
             SDL_RenderDrawLine(renderer, sort_index + 1, square_rect.h / 10 - sort_vector[sort_index], sort_index + 1, square_rect.h / 10);
             SDL_RenderSetScale(renderer, 1, 1);
             SDL_RenderPresent(renderer);
-            std::this_thread::sleep_for(std::chrono::milliseconds(50));
+            std::this_thread::sleep_for(std::chrono::milliseconds(delay_time * 50));
             sort_index++;
             counting_vector[i] --;
         }
@@ -614,5 +617,44 @@ void Sort::renderTotal(vector<int> vector, SDL_Renderer* renderer, SDL_Rect squa
 
         SDL_FreeSurface(counting_surface);
         SDL_DestroyTexture(counting_texture);
+    }
+}
+
+void Sort::quickSort(SDL_Renderer*& renderer, vector<int>& sort_vector, int left, int right)
+{
+    blockButton(renderer);
+    SDL_RenderPresent(renderer);
+    is_sorting = true;
+
+    int mid = sort_vector[(left + right) / 2];
+    int i = left;
+    int j = right;
+
+    while (i <= j)
+    {
+        while (sort_vector[i] < mid) i++;
+        while (sort_vector[j] > mid) j--;
+        if (i <= j)
+        {
+            swap(sort_vector[i], sort_vector[j]);
+            i++;
+            j--;
+        }
+    }
+
+    if (left < j) quickSort(renderer, sort_vector, left, j);
+    if (i < right) quickSort(renderer, sort_vector, i, right);
+
+    if (std::is_sorted(sort_vector.begin(), sort_vector.end()))
+    {
+        unBlockButton(renderer);
+        SDL_RenderPresent(renderer);
+        is_sorting = false;
+        for (int i: sort_vector)
+        {
+            std::cout<<i<<" ";
+        }
+    } else {
+        // std::this_thread::sleep_for(std::chrono::milliseconds(delay_time));
     }
 }

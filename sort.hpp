@@ -39,7 +39,8 @@ class Sort {
         void drawInterchangeSort(vector<int> vector, SDL_Renderer* renderer, unsigned int red, unsigned int blue);
         void countingSort(SDL_Renderer*& renderer);
         void renderTotal(vector<int> vector, SDL_Renderer* renderer, SDL_Rect square_rect,
-        bool is_sorting, TTF_Font *font, SDL_Rect element_rect, SDL_Rect total_rect);
+                            bool is_sorting, TTF_Font *font, SDL_Rect element_rect, SDL_Rect total_rect);
+        void quickSort(SDL_Renderer*& renderer, vector<int>& vector, int left, int right);
 
     private:
         SDL_Cursor* cursor;
