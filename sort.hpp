@@ -45,6 +45,9 @@ class Sort {
         void heapify(SDL_Renderer *&renderer, vector<int> &sort_vector, int n, int i);
         void heapSort(SDL_Renderer*& renderer);
         void drawHeapSort(vector<int> vector, SDL_Renderer*& renderer, int green, int red_left, int red_right);
+        void merge(SDL_Renderer*& renderer, vector<int> &sort_vector, int left, int mid, int right);
+        void mergeSort(SDL_Renderer*& renderer, vector<int> &sort_vector, int left, int right);
+        void drawMergeSort(vector<int> vector, SDL_Renderer*& renderer, int left, int mid, int right);
 
     private:
         SDL_Cursor* cursor;

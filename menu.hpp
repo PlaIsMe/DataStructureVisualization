@@ -15,10 +15,13 @@ class Menu {
         void menuAction(SDL_Event& event, bool& quit, SDL_Renderer*& renderer);
 
     private:
-        SDL_Texture* sort_button;
         SDL_Cursor* cursor;
+        SDL_Texture* sort_button;
         SDL_Rect sort_rect;
         bool sort_hovered = false;
+        SDL_Texture* linked_list_button;
+        SDL_Rect linked_list_rect;
+        bool linked_list_hovered = false;
 };
 
 

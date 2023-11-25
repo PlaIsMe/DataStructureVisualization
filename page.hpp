@@ -4,7 +4,8 @@
 
 enum Page {
     menu_page,
-    sort_page
+    sort_page,
+    linked_list_page
 };
 
 extern Page current_page;

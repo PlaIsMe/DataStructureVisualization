@@ -199,8 +199,13 @@ void Sort::sortAction(SDL_Event &event, bool &quit, SDL_Renderer *&renderer)
                 }
                 else if (heap_sort_hovered)
                 {
-                    vector<int> sort_vector(main_vector.begin(), main_vector.end());
                     sort_thread = std::thread(&Sort::heapSort, this, std::ref(renderer));
+                }
+                else if (merge_sort_hovered)
+                {
+                    vector<int> sort_vector(main_vector.begin(), main_vector.end());
+                    is_sorting = true;
+                    sort_thread = std::thread(&Sort::mergeSort, this, std::ref(renderer), std::ref(sort_vector), 0, sort_vector.size() - 1);
                 }
             }
         }
@@ -830,12 +835,12 @@ void Sort::heapSort(SDL_Renderer*& renderer)
     vector<int> sort_vector(main_vector.begin(), main_vector.end());
 
     // Heapify the node which is not a leaf node
-    for(int i = sort_vector.size()/2 - 1; i >= 0; i--)
+    for(int i = sort_vector.size()/2 - 1; i >= 0 && is_sorting; i--)
     {
         heapify(renderer, sort_vector, sort_vector.size(), i);
     }
     // Heap sort
-    for (int i = sort_vector.size() - 1; i >=0; i--)
+    for (int i = sort_vector.size() - 1; i >=0 && is_sorting; i--)
     {
         SDL_SetRenderDrawColor(renderer, 0, 153, 231, 255);
         SDL_RenderFillRect(renderer, &square_rect);
@@ -870,6 +875,101 @@ void Sort::drawHeapSort(vector<int> vector, SDL_Renderer*& renderer,
             SDL_SetRenderDrawColor(renderer, 125, 207, 182, 255);
         }
         else if (i == red_left || i == red_right)
+        {
+            SDL_SetRenderDrawColor(renderer, 251, 209, 162, 255);
+        }
+        else
+        {
+            SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+        }
+        SDL_RenderDrawLine(renderer, i + 1, square_rect.h / 10 - vector[i], i + 1, square_rect.h / 10);
+    }
+    SDL_RenderSetScale(renderer, 1, 1);
+}
+
+void Sort::merge(SDL_Renderer*& renderer, vector<int> &sort_vector, int left, int mid, int right)
+{
+    int old_left = left;
+    //Split the array two 2 arrays
+    vector<int> left_array(sort_vector.begin() + left, sort_vector.begin() + mid + 1);
+    vector<int> right_array(sort_vector.begin()  + mid + 1, sort_vector.begin() + right + 1);
+    int step_left = 0, step_right = 0;
+    drawMergeSort(sort_vector, renderer, left, mid, right);
+    SDL_RenderPresent(renderer);
+    std::this_thread::sleep_for(std::chrono::milliseconds(delay_time * 200));
+    // Merge two array
+    while (is_sorting && step_left < left_array.size() && step_right < right_array.size()) {
+        // Assign left for the smallest value when compare each elements in two arrays
+        if (left_array[step_left] <= right_array[step_right])
+        {
+            sort_vector[left] = left_array[step_left];
+            left ++;
+            step_left ++;
+        } else {
+            sort_vector[left] = right_array[step_right];
+            left++;
+            step_right++;
+        }
+    }
+    // Push the remaining elements of left, right array into the main array
+    // ONLY IN ONE WHILE LOOP IN TWO WHILE LOOPS BELOW RUN
+    while (is_sorting && step_left < left_array.size())
+    {
+        sort_vector[left] = left_array[step_left];
+        left ++;
+        step_left ++;
+    }
+    while (is_sorting && step_right < right_array.size())
+    {
+        sort_vector[left] = right_array[step_right];
+        left ++;
+        step_right ++;
+    }
+    SDL_SetRenderDrawColor(renderer, 0, 153, 231, 255);
+    SDL_RenderFillRect(renderer, &square_rect);
+    drawMergeSort(sort_vector, renderer, old_left, -1, right);
+    SDL_RenderPresent(renderer);
+    std::this_thread::sleep_for(std::chrono::milliseconds(delay_time * 200));
+}
+
+void Sort::mergeSort(SDL_Renderer*& renderer, vector<int> &sort_vector, int left, int right)
+{
+    blockButton(renderer);
+
+    if (left >= right) return;
+    int mid = (left + right) / 2;
+    mergeSort(renderer, sort_vector, left, mid);
+    mergeSort(renderer, sort_vector, mid + 1, right);
+    if (is_sorting) {
+        merge(renderer, sort_vector, left, mid, right);
+    }
+
+    if (std::is_sorted(sort_vector.begin(), sort_vector.end()))
+    {
+        drawMergeSort(sort_vector, renderer, -1, -1, -1);
+        unBlockButton(renderer);
+        SDL_RenderPresent(renderer);
+        is_sorting = false;
+    } else {
+        // std::this_thread::sleep_for(std::chrono::milliseconds(delay_time));
+    }
+}
+
+void Sort::drawMergeSort(vector<int> vector, SDL_Renderer*& renderer,
+ int left, int mid, int right)
+{
+    SDL_RenderSetScale(renderer, 10, 10);
+    for (int i = 0; i < vector.size(); i++)
+    {
+        if (mid == -1 && left <= i && i <= right)
+        {
+            SDL_SetRenderDrawColor(renderer, 0, 178, 202, 255);
+        }
+        else if (mid != -1 && left <= i && i <= mid)
+        {
+            SDL_SetRenderDrawColor(renderer, 125, 207, 182, 255);
+        }
+        else if (mid != -1 && mid < i && i <= right)
         {
             SDL_SetRenderDrawColor(renderer, 251, 209, 162, 255);
         }
