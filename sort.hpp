@@ -76,7 +76,7 @@ class Sort {
         SDL_Texture* cancel_button;
         SDL_Texture* cancel_disable;
         SDL_Rect cancel_rect;
-        bool cancel_hovered = false;    
+        bool cancel_hovered = false;
 
         // Selection sort button variable
         SDL_Texture* selection_sort_button;

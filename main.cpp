@@ -5,12 +5,14 @@
 #include "menu.hpp"
 #include "page.hpp"
 #include "sort.hpp"
+#include "linked_list.hpp"
 
 SDL_Window* window = nullptr;
 SDL_Renderer* renderer = nullptr;
 SDL_Texture* background_texture = nullptr;
 Menu* menu = nullptr;
 Sort* sort = nullptr;
+LinkedList* linked_list = nullptr;
 
 bool initializeSDL() {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -94,6 +96,11 @@ int main(int argc, char* argv[]) {
                 delete sort;
                 sort = nullptr;
             }
+            if (linked_list != nullptr)
+            {
+                delete linked_list;
+                linked_list = nullptr;
+            }
             menu->menuAction(event, quit, renderer);
         }
         else if (current_page == sort_page)
@@ -107,7 +114,30 @@ int main(int argc, char* argv[]) {
                 delete menu;
                 menu = nullptr;
             }
+            if (linked_list != nullptr)
+            {
+                delete linked_list;
+                linked_list = nullptr;
+            }
             sort->sortAction(event, quit, renderer);
+        }
+        else if (current_page = linked_list_page)
+        {
+            if (linked_list == nullptr)
+            {
+                linked_list = new LinkedList(renderer, background_texture);
+            }
+            if (sort != nullptr)
+            {
+                delete sort;
+                sort = nullptr;
+            }
+            if (menu != nullptr)
+            {
+                delete menu;
+                menu = nullptr;
+            }
+            linked_list->linkedListAction(event, quit, renderer);
         }
 
         // SDL_Delay(16);
