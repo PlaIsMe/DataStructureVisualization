@@ -29,7 +29,7 @@ class Sort {
         void blockButton(SDL_Renderer*& renderer);
         void unBlockButton(SDL_Renderer*& renderer);
         void threadManager(SDL_Renderer*& renderer);
-        void selectionSort(SDL_Renderer*& renderer);
+        void selectionSort(SDL_Renderer*& renderer, vector<int>& sort_vector, bool& is_sorting);
         void drawSelectionSort(vector<int> vector, SDL_Renderer* renderer, unsigned int green, unsigned int red, unsigned int blue);
         void insertionSort(SDL_Renderer*& renderer);
         void drawInsertionSort(vector<int> vector, SDL_Renderer* renderer, unsigned int green, unsigned int red);
@@ -41,6 +41,10 @@ class Sort {
         void renderTotal(vector<int> vector, SDL_Renderer* renderer, SDL_Rect square_rect,
                             bool is_sorting, TTF_Font *font, SDL_Rect element_rect, SDL_Rect total_rect);
         void quickSort(SDL_Renderer*& renderer, vector<int>& vector, int left, int right);
+        void drawQuickSort(vector<int> vector, SDL_Renderer*& renderer, unsigned int green, unsigned int red_left, unsigned int red_right);
+        void heapify(SDL_Renderer *&renderer, vector<int> &sort_vector, int n, int i);
+        void heapSort(SDL_Renderer*& renderer);
+        void drawHeapSort(vector<int> vector, SDL_Renderer*& renderer, int green, int red_left, int red_right);
 
     private:
         SDL_Cursor* cursor;
