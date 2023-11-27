@@ -25,7 +25,14 @@ class LinkedList {
         void linkedListAction(SDL_Event& event, bool& quit, SDL_Renderer*& renderer);
         void destroy();
         void generateAndDrawNewValue(SDL_Renderer*& renderer);
-    
+        void renderSinglyLinkedList(SDL_Renderer*& renderer);
+        void renderElement(SDL_Renderer*& renderer, std::string text, SDL_Rect render_rect, bool is_bordered);
+        void renderArrow(SDL_Renderer*& renderer, SDL_Rect from_rect, SDL_Rect to_rect, std::string direction, bool is_start_bordered, bool is_end_bordered);
+        void renderDestroyArrow(SDL_Renderer*& renderer, SDL_Rect from_rect, SDL_Rect to_rect, std::string direction, bool is_start_bordered, bool is_end_bordered);
+        void singlyLinkedAddFirst(SDL_Renderer*& renderer);
+        void increaseAndDrawNewValue(SDL_Renderer*& renderer);
+        void decreaseAndDrawNewValue(SDL_Renderer*& renderer);
+        void threadManager(SDL_Renderer*& renderer);
 
     private:
         int new_value;
@@ -37,6 +44,12 @@ class LinkedList {
         std::vector<int> number_arrays;
         SDL_Surface *text_surface;
         SDL_Surface *value_surface;
+        SDL_Rect head_rect;
+        SDL_Rect null_rect;
+        bool is_processing = false;
+        std::thread processing_thread;
+        bool exit_thread_manager = false;
+        std::thread thread_manager;
 
         SDL_Texture *new_value_text;
         SDL_Texture *new_value_value;
@@ -89,6 +102,18 @@ class LinkedList {
         SDL_Texture* add_first_disable;
         SDL_Rect add_first_rect;
         bool add_first_hovered;
+
+        // Up button variable
+        SDL_Texture* up_button;
+        SDL_Texture* up_disable;
+        SDL_Rect up_rect;
+        bool up_hovered;
+
+        // Down button variable
+        SDL_Texture* down_button;
+        SDL_Texture* down_disable;
+        SDL_Rect down_rect;
+        bool down_hovered;
 };
 
 #endif // LINKED_LIST_HPP
