@@ -8,6 +8,7 @@ LinkedList::LinkedList(SDL_Renderer *&renderer, SDL_Texture *background_texture)
 {
     thread_manager = std::thread(&LinkedList::threadManager, this, std::ref(renderer));
 
+    current_size = 0;
     for (int i = 0; i < 10; i++)
     {
         number_arrays.push_back(i);
@@ -147,7 +148,9 @@ void LinkedList::linkedListAction(SDL_Event& event, bool& quit, SDL_Renderer*& r
             } else if (change_number_hovered) {
                 generateAndDrawNewValue(renderer);
             } else if (add_first_hovered) {
-                processing_thread = std::thread(&LinkedList::singlyLinkedAddFirst, this, std::ref(renderer));
+                if (current_size < 9) {
+                    processing_thread = std::thread(&LinkedList::singlyLinkedAddFirst, this, std::ref(renderer));
+                }
             } else if (up_hovered) {
                 increaseAndDrawNewValue(renderer);
             } else if (down_hovered) {
@@ -247,9 +250,9 @@ void LinkedList::renderArrow(SDL_Renderer*& renderer, SDL_Rect from_rect,
         end_padding_size = 10;
     }
     if (direction == "right") {
-        SDL_RenderDrawLine(renderer, (from_rect.x + from_rect.w + start_padding_size) / 5, (from_rect.y + (from_rect.h / 2))/5, (to_rect.x - end_padding_size) / 5, (to_rect.y + (to_rect.h / 2)) /5);
-        SDL_RenderDrawLine(renderer, (to_rect.x - end_padding_size - 5) / 5, (to_rect.y + (to_rect.h / 2) - 5)/5, (to_rect.x - end_padding_size - 10) / 5, (to_rect.y + (to_rect.h / 2) - 10)/5);
-        SDL_RenderDrawLine(renderer, (to_rect.x - end_padding_size - 5) / 5, (to_rect.y + (to_rect.h / 2) + 5)/5, (to_rect.x - end_padding_size - 10) / 5, (to_rect.y + (to_rect.h / 2) + 10)/5);
+        SDL_RenderDrawLine(renderer, (from_rect.x + from_rect.w + start_padding_size) / 5, (from_rect.y + (from_rect.h / 2))/5, (to_rect.x - end_padding_size - 5) / 5, (to_rect.y + (to_rect.h / 2)) /5);
+        SDL_RenderDrawLine(renderer, (to_rect.x - end_padding_size - 10) / 5, (to_rect.y + (to_rect.h / 2) - 5)/5, (to_rect.x - end_padding_size - 15) / 5, (to_rect.y + (to_rect.h / 2) - 10)/5);
+        SDL_RenderDrawLine(renderer, (to_rect.x - end_padding_size - 10) / 5, (to_rect.y + (to_rect.h / 2) + 5)/5, (to_rect.x - end_padding_size - 15) / 5, (to_rect.y + (to_rect.h / 2) + 10)/5);
     } else if (direction == "top") {
         SDL_RenderDrawLine(renderer, (from_rect.x + from_rect.w/2) / 5, (from_rect.y - start_padding_size)/5, (to_rect.x + to_rect.w/2) / 5, (to_rect.y + to_rect.h + end_padding_size)/5);
         SDL_RenderDrawLine(renderer, (to_rect.x + to_rect.w/2 - 5)/5, (to_rect.y + to_rect.h + 20)/5, (to_rect.x + to_rect.w/2 - 10)/5, (to_rect.y + to_rect.h + 25)/5);
@@ -287,8 +290,8 @@ void LinkedList::renderDestroyArrow(SDL_Renderer*& renderer, SDL_Rect from_rect,
         int to_x = (to_rect.x - end_padding_size)/5;
         int to_y = (to_rect.y + (to_rect.h / 2)) /5;
         SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-        SDL_RenderDrawLine(renderer, from_x + (to_x - from_x)/2 - 2, from_y - 2, from_x + (to_x - from_x)/2 + 2, from_y + 2);
-        SDL_RenderDrawLine(renderer, from_x + (to_x - from_x)/2 - 2, from_y + 2, from_x + (to_x - from_x)/2 + 2, from_y - 2);
+        SDL_RenderDrawLine(renderer, from_x + (to_x - from_x)/2 - 3, from_y - 2, from_x + (to_x - from_x)/2 + 1, from_y + 2);
+        SDL_RenderDrawLine(renderer, from_x + (to_x - from_x)/2 - 3, from_y + 2, from_x + (to_x - from_x)/2 + 1, from_y - 2);
     } else if (direction == "top") {
         int from_x = (from_rect.x + from_rect.w/2) / 5;
         int from_y = (from_rect.y - start_padding_size)/5;
@@ -297,6 +300,37 @@ void LinkedList::renderDestroyArrow(SDL_Renderer*& renderer, SDL_Rect from_rect,
         SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
         SDL_RenderDrawLine(renderer, from_x - 2, to_y - (to_y - from_y)/2 - 1, from_x + 2, to_y - (to_y - from_y)/2 + 3);
         SDL_RenderDrawLine(renderer, from_x + 2, to_y - (to_y - from_y)/2 - 1, from_x - 2, to_y - (to_y - from_y)/2 + 3);
+    }
+    
+    SDL_RenderSetScale(renderer, 1, 1);
+    SDL_RenderPresent(renderer);
+}
+
+void LinkedList::clearArrow(SDL_Renderer*& renderer, SDL_Rect from_rect, SDL_Rect to_rect,
+ std::string direction, bool is_start_bordered, bool is_end_bordered)
+{
+    SDL_RenderSetScale(renderer, 5, 5);
+    int start_padding_size;
+    if (is_start_bordered) {
+        start_padding_size = 15;
+    } else {
+        start_padding_size = 10;
+    }
+    int end_padding_size;
+    if (is_end_bordered) {
+        end_padding_size = 15;
+    } else {
+        end_padding_size = 10;
+    }
+    if (direction == "right") {
+    } else if (direction == "top") {
+        int from_x = (from_rect.x + from_rect.w/2) / 5;
+        int from_y = (from_rect.y - start_padding_size)/5;
+        int to_x = (to_rect.x + to_rect.w/2) / 5;
+        int to_y = (to_rect.y + to_rect.h + end_padding_size)/5;
+        SDL_Rect clear_rect = {from_x - 2, to_y, 5, from_y - to_y + 1};
+        SDL_SetRenderDrawColor(renderer, 0, 153, 231, 255);
+        SDL_RenderFillRect(renderer, &clear_rect);
     }
     
     SDL_RenderSetScale(renderer, 1, 1);
@@ -354,7 +388,7 @@ void LinkedList::renderSinglyLinkedList(SDL_Renderer*& renderer)
             } else {
                 renderArrow(renderer, old_element_rect, element_rect, "right", true, true);
             }
-            position += 75;
+            position += 85;
             output_node = output_node->next;
         }
         null_rect = {position, (square_rect.y + square_rect.h / 2), 80, 30};
@@ -393,6 +427,7 @@ void LinkedList::singlyLinkedAddFirst(SDL_Renderer*& renderer)
     } else {        
         renderDestroyArrow(renderer, head_rect, first_element_rect, "top", false, true);
         std::this_thread::sleep_for(std::chrono::milliseconds(delay_time));
+        clearArrow(renderer, head_rect, first_element_rect, "top", false, true);
         renderArrow(renderer, new_element_rect, first_element_rect, "bottom", true, true);
         SDL_Rect clear_rect = {new_element_rect.x + new_element_rect.w + 15, new_element_rect.y - 15, 200, new_element_rect.y - 15 };
         SDL_SetRenderDrawColor(renderer, 0, 153, 231, 255);
@@ -405,6 +440,7 @@ void LinkedList::singlyLinkedAddFirst(SDL_Renderer*& renderer)
     singly_head = new_element;
     renderSinglyLinkedList(renderer);
     generateAndDrawNewValue(renderer);
+    current_size++;
 
     is_processing = false;
 }

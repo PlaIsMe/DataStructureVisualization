@@ -33,9 +33,11 @@ class LinkedList {
         void increaseAndDrawNewValue(SDL_Renderer*& renderer);
         void decreaseAndDrawNewValue(SDL_Renderer*& renderer);
         void threadManager(SDL_Renderer*& renderer);
+        void clearArrow(SDL_Renderer*& renderer, SDL_Rect from_rect, SDL_Rect to_rect, std::string direction, bool is_start_bordered, bool is_end_bordered);
 
     private:
         int new_value;
+        int current_size;
         TTF_Font *font;
         SDL_Cursor* cursor;
         SDL_Rect square_rect;
